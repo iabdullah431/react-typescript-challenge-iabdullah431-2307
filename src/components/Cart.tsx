@@ -10,9 +10,9 @@ import { Root, CartItem } from "../types/Product";
 import QuantityControl from "./QuantityControl";
 
 function Cart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [totalCost, setTotalCost] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // Holds cart items
+  const [totalCost, setTotalCost] = useState(0); // Holds total cart cost
+  const [error, setError] = useState<string | null>(null); // Holds error messages if any
   const router = useRouter();
 
   useEffect(() => {
@@ -23,13 +23,14 @@ function Cart() {
           throw new Error("Token is missing. Redirecting to login.");
         }
 
+        // Fetch cart items and set state
         const data: Root = await getCartItems(token);
         setCartItems(data.cartItems);
         setTotalCost(data.totalCost);
       } catch (error) {
         if (error instanceof Error) {
           if (error.message === "Token is missing. Redirecting to login.") {
-            router.push("/login");
+            router.push("/login"); // Redirect if token is missing
           } else {
             setError(error.message);
           }
@@ -43,6 +44,7 @@ function Cart() {
   }, [router]);
 
   const calculateTotalCost = (items: CartItem[]) => {
+    // Calculate the total cost of all cart items
     const total = items.reduce(
       (acc, item) => acc + item.product.price * item.quantity,
       0
@@ -51,6 +53,7 @@ function Cart() {
   };
 
   const handleIncreaseQuantity = async (itemId: number) => {
+    // Increase the quantity of a specific cart item
     const updatedItems = cartItems.map((item) => {
       if (item.id === itemId) {
         return { ...item, quantity: item.quantity + 1 };
@@ -72,14 +75,17 @@ function Cart() {
   };
 
   const handleDecreaseQuantity = async (itemId: number) => {
+    // Decrease the quantity of a specific cart item or remove it if quantity reaches 1
     const itemToUpdate = cartItems.find((item) => item.id === itemId);
     if (itemToUpdate) {
       if (itemToUpdate.quantity === 1) {
+        // Remove item from cart if quantity is 1
         await deleteCartItem(itemId, localStorage.getItem("token"));
         const updatedItems = cartItems.filter((item) => item.id !== itemId);
         setCartItems(updatedItems);
         calculateTotalCost(updatedItems);
       } else {
+        // Decrease quantity if it's greater than 1
         const updatedItems = cartItems.map((item) => {
           if (item.id === itemId) {
             return { ...item, quantity: item.quantity - 1 };
@@ -100,6 +106,7 @@ function Cart() {
   };
 
   const handleCompletePayment = () => {
+    // Prepare and store checkout list in localStorage, then redirect to order page
     const checkoutList = cartItems.map((item) => ({
       price: item.product.price,
       productId: item.product.id,
@@ -113,6 +120,7 @@ function Cart() {
   };
 
   const handleRemoveItem = async (itemId: number) => {
+    // Remove a specific item from the cart and update the total cost
     const token = localStorage.getItem("token");
     await deleteCartItem(itemId, token);
     const updatedItems = cartItems.filter((item) => item.id !== itemId);
@@ -121,6 +129,7 @@ function Cart() {
   };
 
   const truncateTitle = (title: string) => {
+    // Truncate title to 15 characters for small screens
     return title.length > 15 ? `${title.substring(0, 15)}...` : title;
   };
 
@@ -159,6 +168,7 @@ function Cart() {
                   />
                   <div className="flex flex-col gap-1">
                     <h4 className="text-center sm:text-left">
+                      {/* Truncate title for small screens */}
                       <span className="sm:hidden">
                         {truncateTitle(item.product.name)}
                       </span>
@@ -175,6 +185,7 @@ function Cart() {
                   </div>
                 </div>
                 <div className="flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto">
+                  {/* Quantity control component */}
                   <QuantityControl
                     quantity={item.quantity}
                     onIncrease={() => handleIncreaseQuantity(item.id)}

@@ -11,16 +11,16 @@ export async function signIn(email: string, password: string) {
       body: JSON.stringify({ email, password }),
     });
 
-    // التحقق مما إذا كانت الاستجابة ناجحة
+    // Check if the response is successful
     if (!response.ok) {
-      const errorData = await response.text(); // الحصول على نص الخطأ
-      return { success: false, message: errorData || "An unknown error occurred." }; // إرجاع رسالة الخطأ بدلاً من رمي استثناء
+      const errorData = await response.text(); // Get the error message text
+      return { success: false, message: errorData || "An unknown error occurred." }; // Return the error message instead of throwing an exception
     }
 
-    const data = await response.json(); // الآن نستطيع تحليل البيانات بأمان
+    const data = await response.json(); // Now we can safely parse the data
     const sessionId = data.sessionId;
 
-    // التحقق من وجود sessionId
+    // Check if sessionId exists
     if (sessionId) {
       localStorage.setItem('sessionId', sessionId);
     }
@@ -31,6 +31,7 @@ export async function signIn(email: string, password: string) {
     return { success: false, message: "An error occurred during login. Please try again." };
   }
 }
+
 
 
 

@@ -17,16 +17,17 @@ function ProductGrid() {
   useEffect(() => {
     const loadCategoriesAndProducts = async () => {
       try {
+        // Fetch categories and products from the backend
         const categoriesData = await fetchCategories();
         const productsData = await fetchProducts();
         setCategories(categoriesData);
         setProducts(productsData);
-        setFilteredProducts(productsData);
+        setFilteredProducts(productsData); // Initialize filtered products
       } catch (error) {
         console.error("Failed to load data:", error);
         setError("Failed to load products or categories. Please try again.");
       } finally {
-        setLoading(false);
+        setLoading(false); // End loading state
       }
     };
 
@@ -34,6 +35,7 @@ function ProductGrid() {
   }, []);
 
   useEffect(() => {
+    // Filter products based on selected category and search query
     let filtered = products;
 
     if (selectedCategory) {
@@ -66,8 +68,8 @@ function ProductGrid() {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div>Loading...</div>; // Display loading indicator
+  if (error) return <div>{error}</div>; // Display error message if loading fails
 
   return (
     <div className="container mx-auto p-4">
@@ -94,14 +96,14 @@ function ProductGrid() {
         </select>
       </div>
 
-      {/* Product grid */}
+      {/* Display products in a responsive grid */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
-              onAddToCart={handleAddToCart}
+              onAddToCart={handleAddToCart} // Handle add-to-cart action
             />
           ))
         ) : (

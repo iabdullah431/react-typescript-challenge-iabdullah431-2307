@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { Product, Category } from "../types/Product";
 import { fetchProducts, fetchCategories } from "../services/productService";
-import { addToCart } from "../services/cartService"; // Import the addToCart function
+import { addToCart } from "../services/cartService";
 import { toast } from "react-toastify";
 
 function ProductGrid() {
@@ -14,7 +14,6 @@ function ProductGrid() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Fetch categories and products when the component mounts
   useEffect(() => {
     const loadCategoriesAndProducts = async () => {
       try {
@@ -22,19 +21,18 @@ function ProductGrid() {
         const productsData = await fetchProducts();
         setCategories(categoriesData);
         setProducts(productsData);
-        setFilteredProducts(productsData); // Initialize with all products
+        setFilteredProducts(productsData);
       } catch (error) {
         console.error("Failed to load data:", error);
         setError("Failed to load products or categories. Please try again.");
       } finally {
-        setLoading(false); // Stop loading indicator
+        setLoading(false);
       }
     };
 
     loadCategoriesAndProducts();
   }, []);
 
-  // Update filtered products based on search query and selected category
   useEffect(() => {
     let filtered = products;
 
@@ -53,46 +51,41 @@ function ProductGrid() {
     setFilteredProducts(filtered);
   }, [searchQuery, selectedCategory, products]);
 
-  // Add to cart handler
   const handleAddToCart = async (productId: number, quantity: number) => {
     try {
       const result = await addToCart(productId, quantity);
       if (result.success) {
-        toast.success("Product added to cart successfully!"); //toast when succ
+        toast.success("Product added to cart successfully!");
       } else {
-        toast.error("Failed to add product to cart."); // toast when error
+        toast.error("Failed to add product to cart.");
         console.error("Failed to add product to cart:", result.message);
       }
     } catch (error) {
-      toast.error("Error adding product to cart."); //toast when error
+      toast.error("Error adding product to cart.");
       console.error("Error adding to cart:", error);
     }
   };
 
-  // Display loading indicator
   if (loading) return <div>Loading...</div>;
-
-  // Display error message if data failed to load
   if (error) return <div>{error}</div>;
 
   return (
     <div className="container mx-auto p-4">
       {/* Search input and category filter */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 mb-6">
         <input
           type="text"
-          placeholder="Search for a product..."
+          placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-grow p-2 bg-white rounded-md border text-md"
+          className="w-full sm:flex-grow p-2 bg-white rounded-md border text-sm sm:text-md"
         />
-
         <select
-          className="bg-white border text-md rounded-md px-2 py-1"
+          className="w-full sm:w-auto bg-white border text-sm sm:text-md rounded-md px-2 py-1"
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
-          <option value="">All</option>
+          <option value="">All Categories</option>
           {categories.map((category) => (
             <option key={category.id} value={category.categoryName}>
               {category.categoryName}
@@ -102,13 +95,13 @@ function ProductGrid() {
       </div>
 
       {/* Product grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
-              onAddToCart={handleAddToCart} // Pass the add to cart function
+              onAddToCart={handleAddToCart}
             />
           ))
         ) : (

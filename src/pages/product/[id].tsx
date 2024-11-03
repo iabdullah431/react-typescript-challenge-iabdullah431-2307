@@ -5,13 +5,15 @@ import MainHeader from "@/src/components/MainHeader";
 import { addToCart } from "@/src/services/cartService";
 import { fetchProductById } from "@/src/services/productService";
 import { toast } from 'react-toastify'; 
+import QuantityControl from "@/src/components/QuantityControl";
 
 function ProductDetails() {
   const [product, setProduct] = useState<Product | null>(null);
   const router = useRouter();
   const { id } = router.query;
   const [quantity, setQuantity] = useState(1);
-
+  const handleIncrease = () => setQuantity(quantity + 1);
+  const handleDecrease = () => setQuantity(Math.max(1, quantity - 1))
   useEffect(() => {
     const loadProduct = async () => {
       if (id) {
@@ -72,16 +74,11 @@ function ProductDetails() {
 
           {/* Add to Cart Section */}
           <div className="flex items-center gap-4 mt-6">
-            <div className="flex items-center border border-gray-300 rounded-lg">
-              <button onClick={() => setQuantity(quantity + 1)} className="px-4 text-gray-600">+</button>
-              <input 
-                type="number" 
-                value={quantity} 
-                onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))} // Add onChange handler
-                className="w-16 text-center border-l border-r border-gray-300 outline-none" 
-              />
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 text-gray-600">-</button>
-            </div>
+          <QuantityControl 
+        quantity={quantity}
+        onIncrease={handleIncrease}
+        onDecrease={handleDecrease}
+      />
 
             <button 
               type="button" 

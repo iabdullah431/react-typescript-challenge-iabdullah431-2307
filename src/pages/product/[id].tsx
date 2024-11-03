@@ -4,7 +4,7 @@ import { Product } from "../../types/Product";
 import MainHeader from "@/src/components/MainHeader";
 import { addToCart } from "@/src/services/cartService";
 import { fetchProductById } from "@/src/services/productService";
-import { toast } from 'react-toastify'; 
+import { toast } from "react-toastify";
 import QuantityControl from "@/src/components/QuantityControl";
 
 function ProductDetails() {
@@ -13,7 +13,7 @@ function ProductDetails() {
   const { id } = router.query;
   const [quantity, setQuantity] = useState(1);
   const handleIncrease = () => setQuantity(quantity + 1);
-  const handleDecrease = () => setQuantity(Math.max(1, quantity - 1))
+  const handleDecrease = () => setQuantity(Math.max(1, quantity - 1));
   useEffect(() => {
     const loadProduct = async () => {
       if (id) {
@@ -25,7 +25,7 @@ function ProductDetails() {
         }
       }
     };
-    
+
     loadProduct();
   }, [id]);
 
@@ -51,7 +51,6 @@ function ProductDetails() {
     <div className="bg-gray-50">
       <MainHeader />
       <div className="container mx-auto p-6 bg-white rounded-lg shadow-md mt-6 flex flex-col md:flex-row gap-6 min-h-[400px]">
-        
         {/* Product Image */}
         <div className="flex justify-center lg:w-1/4 md:w-1/2">
           <img
@@ -64,24 +63,30 @@ function ProductDetails() {
         {/* Product Details */}
         <div className="flex flex-col justify-between md:w-3/4">
           <div>
-            <h1 className="text-2xl font-bold text-primary mb-2">{product.title}</h1>
+            <h1 className="text-2xl font-bold text-primary mb-2">
+              {product.title}
+            </h1>
             <small className="text-xs text-gray-500">{product.category}</small>
             <div className="flex items-center my-4 gap-2">
-              <span className="font-medium text-md text-primary">{product.price} SAR</span>
+              <span className="font-medium text-md text-primary">
+                {product.price} SAR
+              </span>
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed mb-6">{product.description}</p>
+            <p className="text-sm text-gray-700 leading-relaxed mb-6">
+              {product.description}
+            </p>
           </div>
 
           {/* Add to Cart Section */}
           <div className="flex items-center gap-4 mt-6">
-          <QuantityControl 
-        quantity={quantity}
-        onIncrease={handleIncrease}
-        onDecrease={handleDecrease}
-      />
+            <QuantityControl
+              quantity={quantity}
+              onIncrease={handleIncrease}
+              onDecrease={handleDecrease}
+            />
 
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="flex-1 bg-primary text-white py-2 rounded-md text-md font-semibold w-full md:w-auto"
               onClick={handleAddToCart} // Call the function directly
             >
